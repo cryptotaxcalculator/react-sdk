@@ -33,13 +33,13 @@ function App() {
   return (
     <div>
       <h1>My Crypto App</h1>
-      <TaxCalculator />
+      <TaxCalculator themeId={THEME_ID}/>
     </div>
   );
 }
 ```
 
-The `TaxCalculator` component will render a full-height iframe containing the Crypto Tax Calculator application.
+The `TaxCalculator` component will render a full-height iframe containing the Crypto Tax Calculator application. The `THEME_ID` will be provided by Crypto Tax Calculator when you receive your authentication token.
 
 ## Features
 
