@@ -1,8 +1,8 @@
-# 🚀 CTC React SDK
+# CTC React SDK
 
 Simple React components to embed Crypto Tax Calculator in your application.
 
-## 📦 Installation
+## Installation
 
 This package is hosted on GitHub Packages and requires authentication.
 
@@ -41,12 +41,12 @@ function App() {
 
 The `TaxCalculator` component will render a full-height iframe containing the Crypto Tax Calculator application.
 
-## ✨ Features
+## Features
 
-- 🎯 Simple drop-in integration
-- 🖼️ Responsive design
-- 🔄 Environment-aware URLs
-- 🎨 Customizable styling
+- Simple drop-in integration
+- Responsive design
+- Environment-aware URLs
+- Customizable styling
 
 ## 🤝 Requirements
 
@@ -54,10 +54,10 @@ The `TaxCalculator` component will render a full-height iframe containing the Cr
 - Modern browser support
 - Valid authentication token from CTC team
 
-## 📝 License
+## License
 
 MIT © [Crypto Tax Calculator](https://cryptotaxcalculator.io)
 
-## 🔐 Access
+## Access
 
 This package requires authentication. Please contact the Crypto Tax Calculator team to request access and receive your authentication token.
