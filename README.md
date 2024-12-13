@@ -1,6 +1,8 @@
-# CTC React SDK
+# TaxHub SDK
 
-Simple React components to embed Crypto Tax Calculator in your application.
+TaxHub works by embedding a complete tax experience directly into your platform, allowing your users to process their taxes without leaving your application.
+
+It's seamless, customizable, and secure — with zero configuration needed.
 
 ## Installation
 
@@ -27,36 +29,32 @@ pnpm add @cryptotaxcalculator/react-sdk
 ## Usage
 
 ```tsx
-import { TaxCalculator } from "@cryptotaxcalculator/react-sdk";
+import { TaxHub } from '@cryptotaxcalculator/react-sdk';
 
 function App() {
-  return (
-    <div>
-      <h1>My Crypto App</h1>
-      <TaxCalculator theme={THEME_ID}/>
-    </div>
-  );
+    return (
+        <div>
+            <h1>My Crypto App</h1>
+            <TaxHub appearance={{ theme: 'cobalt' }} />
+        </div>
+    );
 }
 ```
 
-The `TaxCalculator` component will render a full-height iframe containing the Crypto Tax Calculator application. Your `THEME_ID` will be provided alongside your access token. To match the tax calculator to your application see the [Customization](docs/Customization.md) for more information.
+The `TaxHub` component will render the TaxHub application by Crypto Tax Calculator. To match the TaxHub to your application see the [Customization](docs/Customization.md) for more information.
 
 ## Features
 
-- Simple drop-in integration
-- Responsive design
-- Environment-aware URLs
-- Customizable styling (See [Customization](docs/Customization.md))
+-   Simple drop-in integration
+-   Customizable styling (See [Customization](docs/Customization.md))
+-   Automated Transaction Import
+-   Comprehensive Tax Report Generation
 
 ## Requirements
 
-- React 18 or higher
-- Modern browser support
-- Valid authentication token and theme from CTC team
-
-## License
-
-MIT © [Crypto Tax Calculator](https://cryptotaxcalculator.io)
+-   React 18 or higher
+-   Modern browser support
+-   Valid authentication token and theme from CTC team
 
 ## Access
 
