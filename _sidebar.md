@@ -1,2 +1,0 @@
-- [About](About)
-- [Getting Started](README)

@@ -5,5 +5,5 @@
 CTC React makes it incredibly simple to add powerful crypto tax calculation features to your website.
 
 [GitHub](https://github.com/cryptotaxcalculator/react-sdk/)
-[About the SDK](_about.md)
-[Getting Started](README.md)
+[About the SDK](README.md)
+[Getting Started](GettingStarted.md)

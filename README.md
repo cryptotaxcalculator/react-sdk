@@ -24,7 +24,7 @@ yarn add @cryptotaxcalculator/react-sdk
 pnpm add @cryptotaxcalculator/react-sdk
 ```
 
-## 🔧 Usage
+## Usage
 
 ```tsx
 import { TaxCalculator } from "@cryptotaxcalculator/react-sdk";
@@ -33,26 +33,26 @@ function App() {
   return (
     <div>
       <h1>My Crypto App</h1>
-      <TaxCalculator themeId={THEME_ID}/>
+      <TaxCalculator theme={THEME_ID}/>
     </div>
   );
 }
 ```
 
-The `TaxCalculator` component will render a full-height iframe containing the Crypto Tax Calculator application. The `THEME_ID` will be provided by Crypto Tax Calculator when you receive your authentication token.
+The `TaxCalculator` component will render a full-height iframe containing the Crypto Tax Calculator application. Your `THEME_ID` will be provided alongside your access token. To match the tax calculator to your application see the [Customization](docs/Customization.md) for more information.
 
 ## Features
 
 - Simple drop-in integration
 - Responsive design
 - Environment-aware URLs
-- Customizable styling
+- Customizable styling (See [Customization](docs/Customization.md))
 
-## 🤝 Requirements
+## Requirements
 
 - React 18 or higher
 - Modern browser support
-- Valid authentication token from CTC team
+- Valid authentication token and theme from CTC team
 
 ## License
 

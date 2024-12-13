@@ -46,12 +46,21 @@
         noData: 'No matches found.',
         // Headline depth, 1 - 6
         depth: 2,
+      },
+      tabs: {
+        persist: true, // default
+        sync: true, // default
+        theme: 'classic', // default
+        tabComments: true, // default
+        tabHeadings: true // default
       }
     };
   </script>
 
   <!-- Required -->
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+  <!-- docsify-tabs (latest v1.x.x) -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
 
   <!-- Recommended -->
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/zoom-image.min.js"></script>
