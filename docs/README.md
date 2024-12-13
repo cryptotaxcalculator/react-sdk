@@ -14,7 +14,9 @@ Designed to streamline the most complex tax workflows, the SDK offers:
 -   Comprehensive security: The SDK is built with best-in-class security practices, including SOC 2 Type II compliance.
 -   Advanced customization: Fully configurable to match your brand for a seamless user experience.
 
-## Customize appearance
+## Tailor Your TaxHub
+
+Preview your customized TaxHub solution with our pre-built themes. For advanced customization settings see (See&nbsp;[Customization](/Customization))
 
 <!-- tabs:start -->
 

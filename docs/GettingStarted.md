@@ -50,10 +50,12 @@ The `TaxHub` component will render the TaxHub application by Crypto Tax Calculat
 -   **Drop-In components**: Add the tax calculator to your app in minutes.
 -   **Responsive design**: Optimized for mobile, tablet, and desktop.
 
-### Customizable Design (See&nbsp;[Customization](/Customization))
+### Advanced Customization
 
 -   **Theming options**: Customize colors, fonts, and border styles to align with your branding.
 -   **Dynamic styling**: Match the tax centre to your app’s look and feel effortlessly.
+
+For further details see [Customization](/Customization)
 
 ### Developer-friendly
 
