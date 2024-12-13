@@ -36,73 +36,73 @@ We offer plenty of customization here. If you are unsure please reach out to CTC
 ## Background
 
 * Brand
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * Danger
-  * default
+  <!-- * default
   * hover
   * pressed
-  * high
+  * high -->
 * disabled
 * input
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * neutral
-  * lowest
+  <!-- * lowest
     * default
     * hover
     * pressed
   * default
   * hover
-  * pressed
+  * pressed -->
 * overlay
 * success
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * warning
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * Accent
   * Green
-    * lowest
+    <!-- * lowest
     * low
     * medium
     * high
-    * highest
+    * highest -->
   * neutral
-    * lowest
+    <!-- * lowest
     * low
     * medium
     * high
-    * highest
+    * highest -->
   * Orange
-    * lowest
+    <!-- * lowest
     * low
     * medium
     * high
-    * highest
+    * highest -->
   * Red
-    * lowest
+    <!-- * lowest
     * low
     * medium
     * high
-    * highest
+    * highest -->
   * Brand
-    * lowest
+    <!-- * lowest
     * low
     * medium
     * high
-    * highest
+    * highest -->
   * Yellow
-    * lowest
+    <!-- * lowest
     * low
     * medium
     * high
-    * highest
+    * highest -->
 
 
 ## Border
@@ -112,37 +112,38 @@ We offer plenty of customization here. If you are unsure please reach out to CTC
 * success
 * warning
 * neutral
-  * default
+  <!-- * default
   * low
   * medium
   * high
-  * highest
+  * highest -->
 
 ## Button
+You can specify a `default`, `hover` and `pressed` state for each of these.
 * brand
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * danger
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * neutral
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * subtle
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * success
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * warning
-  * default
+  <!-- * default
   * hover
-  * pressed
+  * pressed -->
 * disabled
 
 ## Text
