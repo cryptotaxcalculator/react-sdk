@@ -1,6 +1,6 @@
 # Customize your TaxHub experience
 
-Customize your TaxHub for a seamless integration with your application. From colors and fonts to border-radius, our flexible style options allow you to match the design of your site with the appearance option. While maintaining a consistent user experience, you can modify colors, fonts, borders, padding, and more to fully align the look and feel with your brand.
+Customize your TaxHub for a seamless integration with your application. From colors and fonts to border-radius, our flexible style options allow you to match the design of your site with the appearance option.
 
 1. **Start by picking a theme.**
    Get up and running right away by picking the prebuilt theme that most closely resembles your platform.
