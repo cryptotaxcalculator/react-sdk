@@ -2,6 +2,8 @@
 
 We offer multiple style options for a truly seamless tax experience within your application. From colors and fonts to border radius, you can fully customize the look and feel to match your brand. Below is a list of style settings you can specify when creating your tax calculator.
 
+If you are unsure or would like something specific please reach out to us.
+
 # Typography
 
 ## Primary
@@ -29,7 +31,7 @@ If you have a special font, you can also specify the `fontWeight`, `fontStyle`, 
 
 # Colors
 
-We offer multiple options for each of these color options.
+We offer plenty of customization here. If you are unsure please reach out to CTC and we can help you decide which colors to use here.
 
 ## Background
 
