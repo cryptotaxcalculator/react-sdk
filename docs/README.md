@@ -27,4 +27,4 @@ Get started with minimal effort to integrate a smooth, fully branded tax experie
 
 ## Getting started
 
-All you need to get started is send us your [brand-kit theme](Customization), install the SDK, and render our Tax Calculator component. Read more in [Getting Started](README)
+All you need to get started is send us your [brand-kit theme](Customization), install the SDK, and render our Tax Calculator component. Read more in [Getting Started](GettingStarted)
