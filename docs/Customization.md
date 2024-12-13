@@ -6,7 +6,7 @@ Customize your TaxHub for a seamless integration with your application. From col
    Get up and running right away by picking the prebuilt theme that most closely resembles your platform.
 
 2. **Customize the theme using variables .**
-   Set variables like fontFamily and brand color to customize components appearance.
+   Set variables like `fontFamily` and `colorBrand` to customize components appearance.
 
 3. **Reach out for more options.**
    If you're stuck or have any requests - just reach out to our team and we can help you create and manage your TaxHub styling.
@@ -31,12 +31,11 @@ const appearance = {
   theme: 'cobalt',
 
   variables: {
-    colorPrimary: '#0570be',
+    colorBrand: '#0570be',
     colorBackground: '#fffff0',
     colorText: '#30213d',
     colorDanger: '#dfb41',
     fontFamily: 'Roboto, system-ui, sans-serif',
-    spacingUnit: '2px',
     borderRadius: '4px',
     // See all possible variables below
   }
