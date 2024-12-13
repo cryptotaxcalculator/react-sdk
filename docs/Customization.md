@@ -45,14 +45,6 @@ const appearance = {
 
 # Typography
 
-## Primary
-
-This is the primary font used for text to display to the user. We recommend you use a sans-serif font as they tend to be more ledgible.
-
-## Secondary
-
-This is the secondary font used for displaying numbers within the app. This can be the same as the primary font.
-
 # Styles
 
 If you have a special font, you can specify the following properties for each typography style:
