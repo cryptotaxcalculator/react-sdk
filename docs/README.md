@@ -20,17 +20,9 @@ Preview your customized TaxHub solution with our pre-built themes. For advanced 
 
 <!-- tabs:start -->
 
-#### **Cobalt**
-
-![Cobalt](media/cobalt.png)
-
 #### **Purple**
 
 ![Purple Theme](media/Purple.png)
-
-#### **Blue Ribbon**
-
-![Blue Ribbon Theme](media/BlueRibbon.png)
 
 #### **BlackPink**
 
