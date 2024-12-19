@@ -43,6 +43,11 @@ function App() {
 
 The `TaxHub` component will render the TaxHub application by Crypto Tax Calculator. To match the TaxHub to your application see the [Customization](/Customization) for more information.
 
+### Options
+| name    | type | description | 
+| ------- | ---- | ----------- |
+| `defaultWallets` | [`Wallet[]`](Wallets) | A list of wallets to auto-import for the user. Users can then import more accounts within the app. See [Wallets](Wallets) for more information. |
+
 ## Features
 
 ### Simplified Integration
