@@ -1,3 +1,4 @@
-- [About](README)
-- [Getting Started](GettingStarted)
-- [Customization](Customization)
+-   [About](README)
+-   [Getting Started](GettingStarted)
+-   [Customization](Customization)
+-   [Changelog](Changelog)
