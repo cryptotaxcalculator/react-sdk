@@ -72,6 +72,32 @@ For further details see [Customization](/Customization)
 -   React 18 or higher
 -   Modern browser support
 
+## Deploying TaxHub
+
+To deploy the TaxHub, request Crypto Tax Calculator to whitelist your domain.
+For example, if you were deploying at `taxhub.example.com`, Crypto Tax Calculator will whitelist `taxhub.example.com` and then the TaxHub will appear correctly at that domain.
+
+## Local Development
+
+Local development requires your IP to be whitelisted. Request your IP to be whitelisted by contacting Crypto Tax Calculator.
+After you IP has been whitelisted you can change the TaxHub to "dev" mode which allows you to run it on your local environment.
+
+```tsx
+import { TaxHub } from '@cryptotaxcalculator/react-sdk';
+
+function App() {
+    return (
+        <div>
+            <h1>My Crypto App</h1>
+            <TaxHub
+                appearance={{ theme: 'cobalt' }}
+                envMode={'dev'}
+            />
+        </div>
+    );
+}
+```
+
 ## FAQ
 
 -   Q: How do I request access to the SDK?
