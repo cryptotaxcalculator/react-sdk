@@ -45,12 +45,12 @@ The `TaxHub` component will render the TaxHub application by Crypto Tax Calculat
 
 ### React Props
 
-| name                    | type                                   | description                                              |
-| ----------------------- | -------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------- |
-| `appearance.theme`      | `string`                               | A valid theme for the application.                       |
-| `appearance.colorMode?` | `light` \| `dark`                      | The color mode for the theme                             |
-| `lang`                  | `'en' \| 'it' \| 'es' \| 'fr' \| 'de'` | The language to display the TaxHub in. Defaults to 'en'. |
-| `queryParams`           | `Record<string, string                 | number>`                                                 | Optional query params to pass through to the underlying TaxHub. |
+| name                    | type                                   | description                                                     |
+| ----------------------- | -------------------------------------- | --------------------------------------------------------------- |
+| `appearance.theme`      | `string`                               | A valid theme for the application.                              |
+| `appearance.colorMode?` | `light` \| `dark`                      | The color mode for the theme                                    |
+| `lang`                  | `'en' \| 'it' \| 'es' \| 'fr' \| 'de'` | The language to display the TaxHub in. Defaults to 'en'.        |
+| `queryParams`           | `Record<string, string \| number>`     | Optional query params to pass through to the underlying TaxHub. |
 
 ## Features
 
