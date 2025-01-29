@@ -48,13 +48,21 @@ The `TaxHub` component will render the TaxHub application by Crypto Tax Calculat
 
 ### React Props
 
-| name                    | type                                   | description                                                          |
-| ----------------------- | -------------------------------------- | -------------------------------------------------------------------- |
-| `referrerId`            | `string`                               | Your provider ID supplied by Crypto Tax Calculator. This is required |
-| `appearance.theme`      | `string`                               | A valid theme for the application.                                   |
-| `appearance.colorMode?` | `light` \| `dark`                      | The color mode for the theme                                         |
-| `lang`                  | `'en' \| 'it' \| 'es' \| 'fr' \| 'de'` | The language to display the TaxHub in. Defaults to 'en'.             |
-| `queryParams`           | `Record<string, string \| number>`     | Optional query params to pass through to the underlying TaxHub.      |
+| name                    | type                                              | description                                                          |
+| ----------------------- | ------------------------------------------------- | -------------------------------------------------------------------- |
+| `referrerId`            | `string`                                          | Your provider ID supplied by Crypto Tax Calculator. This is required |
+| `firstPromoterId?`      | `string` (optional)                               | Your tracking ID supplied by Crypto Tax Calculator.                  |
+| `appearance.theme`      | `string`                                          | A valid theme for the application.                                   |
+| `appearance.colorMode?` | `light` \| `dark` (optional)                      | The color mode for the theme                                         |
+| `lang?`                 | `'en' \| 'it' \| 'es' \| 'fr' \| 'de'` (optional) | The language to display the TaxHub in. Defaults to 'en'.             |
+| `queryParams?`          | `Record<string, string \| number>` (optional)     | Optional query params to pass through to the underlying TaxHub.      |
+
+#### Query Params
+
+| name       | type     | description                                                             |
+| ---------- | -------- | ----------------------------------------------------------------------- |
+| `accounts` | `string` | Comma separate list of ethereum wallet addresses e.g. "0x1..23,0x3..45" |
+| `networks` | `string` | Comma separated list of network ids e.g. "1,10"                         |
 
 ## Features
 
