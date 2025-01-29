@@ -44,9 +44,13 @@ function App() {
 The `TaxHub` component will render the TaxHub application by Crypto Tax Calculator. To match the TaxHub to your application see the [Customization](/Customization) for more information.
 
 ### Options
-| name    | type | description | 
-| ------- | ---- | ----------- |
-| `defaultWallets` | [`Wallet[]`](Wallets) | A list of wallets to auto-import for the user. Users can then import more accounts within the app. See [Wallets](Wallets) for more information. |
+
+| name                    | type                                   | description                                                                                        |
+| ----------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `defaultWallets`        | [`Wallet[]`](Wallets)                  | A list of wallets to auto-import for the user. Users can then import more accounts within the app. |
+| `appearance.theme`      | `string`                               | A valid theme for the application.                                                                 |
+| `appearance.colorMode?` | `light` \| `dark`                      | The color mode for the theme                                                                       |
+| `lang`                  | `'en' \| 'it' \| 'es' \| 'fr' \| 'de'` | The language to display the TaxHub in. Defaults to 'en'.                                           |
 
 ## Features
 
@@ -90,7 +94,7 @@ function App() {
         <div>
             <h1>My Crypto App</h1>
             <TaxHub
-                appearance={{ theme: 'cobalt' }}
+                appearance={{ theme: 'cobalt', colorMode: 'light' }}
                 envMode={'dev'}
             />
         </div>
