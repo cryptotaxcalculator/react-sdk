@@ -46,7 +46,9 @@ function App() {
 
 The `TaxHub` component will render the TaxHub application by Crypto Tax Calculator. To match the TaxHub to your application see the [Customization](/Customization) for more information.
 
-### React Props
+### TaxHub Boostrapping Props
+
+These properties allow you to configure the TaxHub when it starts up. Changes to these props will not affect the TaxHub if it has already started.
 
 | name                    | type                                              | description                                                          |
 | ----------------------- | ------------------------------------------------- | -------------------------------------------------------------------- |
