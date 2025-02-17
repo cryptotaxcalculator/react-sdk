@@ -73,13 +73,18 @@ These properties allow you to configure the TaxHub when it starts up. Changes to
 The default behaviour is to preserve a session. If you wish to force the start of a new session you can do so using the `initialAuthState` property.
 
 ```tsx
+import useLocalStorage from '...';
+
 const [shouldCreateNewSession, setShouldCreateNewSession] =
-    useState(true); // Replace with your own logic
+    useLocalStorage(true); // Replace with your own logic
+
 <TaxHub
     initialAuthState={
         shouldCreateNewSession ? 'new_session' : 'preserve_session'
     }
     onSetupComplete={() => {
+        // This guarantees if the user refreshes the page,
+        // they won't create a new session every time
         setShouldCreateNewSession(false);
     }}
 />;
