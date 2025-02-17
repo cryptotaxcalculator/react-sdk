@@ -68,6 +68,20 @@ These properties allow you to configure the TaxHub when it starts up. Changes to
 | `accounts` | `string` | Comma separate list of ethereum wallet addresses e.g. "0x1..23,0x3..45" |
 | `networks` | `string` | Comma separated list of network ids e.g. "1,10"                         |
 
+#### Managing Sessions
+
+The default behaviour is to preserve a session. If you wish to force the start of a new session you can do so sing the `initialAuthState` property.
+
+```
+const [shouldCreateNewSession, setShouldCreateNewSession] = useState(true); // Replace with your own logic
+<TaxHub
+    initialAuthState={shouldCreateNewSession ? 'new_session' : 'preserve_session' }
+    onSetupComplete={() => {
+        setShouldCreateNewSession(false);
+    }}
+/>
+```
+
 ## Features
 
 ### Simplified Integration
