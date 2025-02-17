@@ -50,14 +50,16 @@ The `TaxHub` component will render the TaxHub application by Crypto Tax Calculat
 
 These properties allow you to configure the TaxHub when it starts up. Changes to these props will not affect the TaxHub if it has already started.
 
-| name                    | type                                              | description                                                          |
-| ----------------------- | ------------------------------------------------- | -------------------------------------------------------------------- |
-| `referrerId`            | `string`                                          | Your provider ID supplied by Crypto Tax Calculator. This is required |
-| `firstPromoterId?`      | `string` (optional)                               | Your tracking ID supplied by Crypto Tax Calculator.                  |
-| `appearance.theme`      | `string`                                          | A valid theme for the application.                                   |
-| `appearance.colorMode?` | `light` \| `dark` (optional)                      | The color mode for the theme                                         |
-| `lang?`                 | `'en' \| 'it' \| 'es' \| 'fr' \| 'de'` (optional) | The language to display the TaxHub in. Defaults to 'en'.             |
-| `queryParams?`          | `Record<string, string \| number>` (optional)     | Optional query params to pass through to the underlying TaxHub.      |
+| name                    | type                                                     | description                                                                                                                                                              |
+| ----------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `referrerId`            | `string`                                                 | Your provider ID supplied by Crypto Tax Calculator. This is required                                                                                                     |
+| `firstPromoterId?`      | `string` (optional)                                      | Your tracking ID supplied by Crypto Tax Calculator.                                                                                                                      |
+| `appearance.theme`      | `string`                                                 | A valid theme for the application.                                                                                                                                       |
+| `appearance.colorMode?` | `light` \| `dark` (optional)                             | The color mode for the theme                                                                                                                                             |
+| `lang?`                 | `'en' \| 'it' \| 'es' \| 'fr' \| 'de'` (optional)        | The language to display the TaxHub in. Defaults to 'en'.                                                                                                                 |
+| `queryParams?`          | `Record<string, string \| number>` (optional)            | Optional query params to pass through to the underlying TaxHub.                                                                                                          |
+| `initialAuthState`      | `preserve_session` (default) \| `new_session` (optional) | Optional initial authentication state. Determines whether to preserve any existing auth session or start a new session. Defaults to 'preserve_session'.                  |
+| `onSetupComplete`       | `() => void` (optional)                                  | Optional callback that fires once after the initial setup is complete. This is useful for any cleanup or side effects that need to run after TaxHub is initially set up. |
 
 #### Query Params
 
