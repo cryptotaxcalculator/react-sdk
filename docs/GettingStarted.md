@@ -66,7 +66,48 @@ These properties allow you to configure the TaxHub when it starts up. Changes to
 | name       | type     | description                                                             |
 | ---------- | -------- | ----------------------------------------------------------------------- |
 | `accounts` | `string` | Comma separate list of ethereum wallet addresses e.g. "0x1..23,0x3..45" |
-| `networks` | `string` | Comma separated list of network ids e.g. "1,10"                         |
+| `networks` | `string` | Comma separated list of chain ids e.g. "1,10"                           |
+
+Support Network Chains
+
+-   81457 Blast
+-   7000 Zeta Chain
+-   42161 ARB
+-   42170 Arbitrum Nova
+-   1313161554 Aurora
+-   43114 Avalanche
+-   8453 Base
+-   199 BitTorrent Chain
+-   288 Boba
+-   56 BSC
+-   7700 Canto
+-   42220 Celo
+-   1024 CLV Chain
+-   25 Cronos
+-   1 ETH
+-   250 Fantom
+-   2222 Kava
+-   1088 Metis
+-   1284 Moonbeam
+-   1285 Moonriver
+-   10 OPT
+-   137 Polygon
+-   369 Pulse Chain
+-   100 Xdai
+-   59144 Linea
+-   7777777 Zora
+-   5000 Mantle
+-   324 ZkSync
+-   1101 Polygon ZkEvm
+-   534352 Scroll
+-   169 Manta Pacific
+-   61 Ethereum Classic
+-   13371 Immutable
+-   14 Flare
+-   106 Velas
+-   167000 Taiko
+-   34443 Mode
+-   146 Sonic
 
 #### Managing Sessions
 
