@@ -55,6 +55,13 @@ For detailed API documentation including all available props and features, see t
 -   **Drop-In components**: Add the tax calculator to your app in minutes.
 -   **Responsive design**: Optimized for mobile, tablet, and desktop.
 
+### Automatic Imports
+
+Automatic imports provide TaxHub users with a seamless experiences. As soon as they log in, their exchange or on-chain transactions can be automatically imported for them, starting the tax calculation process.
+
+- **Exchanges**: Automatically connect and import data from [many exchanges](/APIReference)
+- **On-Chain**: See the [listed chains](/APIReference)
+
 ### Advanced Customization
 
 -   **Theming options**: Customize colors, fonts, and border styles to align with your branding.
