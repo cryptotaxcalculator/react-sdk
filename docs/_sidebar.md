@@ -1,4 +1,5 @@
 -   [About](README)
 -   [Getting Started](GettingStarted)
 -   [Customization](Customization)
+-   [API Reference](APIReference)
 -   [Changelog](Changelog)
