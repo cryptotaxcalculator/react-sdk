@@ -8,11 +8,11 @@ The TaxHub SDK provides developers with an effortless way to integrate a fully b
 
 Designed to streamline the most complex tax workflows, the SDK offers:
 
--   Effortless deployment: Deploy in under a day with minimal setup or integration maintenance.
--   Global scalability: Multi-asset and multi-jurisdiction tax compliance and support out-of-the-box.
--   Real-time compliance: Automatically adapt to changing tax regulations in real-time ensuring uninterrupted compliance.
--   Comprehensive security: The SDK is built with best-in-class security practices, including SOC 2 Type II compliance.
--   Advanced customization: Fully configurable to match your brand for a seamless user experience.
+- Effortless deployment: Deploy in under a day with minimal setup or integration maintenance.
+- Global scalability: Multi-asset and multi-jurisdiction tax compliance and support out-of-the-box.
+- Real-time compliance: Automatically adapt to changing tax regulations in real-time ensuring uninterrupted compliance.
+- Comprehensive security: The SDK is built with best-in-class security practices, including SOC 2 Type II compliance.
+- Advanced customization: Fully configurable to match your brand for a seamless user experience.
 
 ## Tailor Your TaxHub
 
