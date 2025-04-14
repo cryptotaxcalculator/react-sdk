@@ -1,6 +1,34 @@
 # Available Extensions
 
-Extend the core TaxHub functionality with optional modules designed for deeper partner integration.
+This document details optional extensions that can be added to the core TaxHub integration to enable enhanced data sharing and functionality between the partner platform and CTC.
+
+---
+
+## Common API Authentication (HMAC-SHA256)
+
+Unless otherwise specified (like for incoming webhooks), API endpoints provided by CTC for partner data access require authenticated requests using HMAC-SHA256 signatures. This ensures that requests originate from a trusted partner.
+
+**Credentials:** You will be provided with a unique Partner **API Key** and **API Secret** by CTC during onboarding.
+
+**Mechanism:**
+
+1.  **Headers Required:** All authenticated API requests MUST include the following headers:
+    - `X-API-Key`: Your unique API Key.
+    - `X-Timestamp`: The current Unix timestamp (seconds since epoch). Requests with timestamps significantly skewed from server time may be rejected to prevent replay attacks.
+    - `X-Signature`: The Base64 encoded HMAC-SHA256 signature calculated as described below.
+2.  **Signature Generation:**
+    - **String to Sign:** Concatenate the following elements using a newline character (`\n`) as a separator:
+      - Unix Timestamp (from `X-Timestamp` header)
+      - HTTP Method (e.g., `GET`, `POST`)
+      - Request Path (The full path, including any resource IDs, e.g., `/v1/partner/cost_basis/transactions/user123`)
+      - Query String (Alphabetically sorted by parameter name, e.g., `asset_ticker=BTC&limit=100`). If no query string, use an empty string.
+      - Request Body (The raw request body string). If no body (e.g., for GET requests), use an empty string.
+    - **Compute HMAC:** Calculate the HMAC-SHA256 hash of the "String to Sign" using your **API Secret** as the key.
+    - **Encode:** Base64 encode the resulting binary hash. This encoded string is the value for the `X-Signature` header.
+
+**Authentication Failures:** Requests with missing or invalid headers, an incorrect signature, or significant timestamp skew will result in a `401 Unauthorized` response.
+
+---
 
 ## 1099-DA Cost Basis Sharing Extension
 
@@ -12,14 +40,14 @@ This extension leverages the secure SSO connection established by the core TaxHu
 
 1.  **One-Time Setup:** During the initial partnership configuration via a dedicated process provided by CTC, you (the partner) provide CTC with a secure HTTPS **Notification Webhook URL**. CTC provides you with **Partner-Level API Credentials** (API Key & Secret) for accessing the Data Pull API and establishes a shared secret for signing/verifying the notification webhooks. Standard OAuth 2.0 Client ID exchange also occurs for the base SSO flow.
 2.  **Update Notification:** When cost basis data relevant to your platform (e.g., for assets transferred to/from your exchange, focusing on data needed for your 1099-DA) is updated or explicitly prepared by the user within CTC, our system sends a lightweight, cryptographically signed notification payload to your registered webhook URL. This signals that new data is available for retrieval without requiring you to poll constantly.
-3.  **Data Retrieval:** Upon receiving and successfully verifying the notification, your backend system uses the provided **Partner-Level API Credentials** to make a secure, authenticated `GET` request to the CTC Partner Data API endpoint. This request specifies the `providerUserId` (obtained from the notification or your internal mapping) to retrieve the full, updated, structured cost basis data.
+3.  **Data Retrieval:** Upon receiving and successfully verifying the notification, your backend system uses the provided **Partner-Level API Credentials** to make a secure, authenticated `GET` request to the CTC Partner Data API endpoint. This request specifies the `provider_uid` (obtained from the notification or your internal mapping) to retrieve the full, updated, structured cost basis data.
 4.  **Data Ingestion:** Your system processes the JSON response from the Partner Data API, ingesting the detailed cost basis and acquisition lot information for use in your 1099-DA generation process or other internal systems.
 
 ---
 
 ### Notification Webhook Specification
 
-CTC uses webhooks to notify your system when relevant cost basis data is updated for a connected user. Your system must expose a secure HTTPS endpoint to receive these notifications.
+CTC uses webhooks to notify your system when relevant cost basis data is updated for a connected user. This mechanism uses a **Shared Secret** (distinct from the API Secret) for verifying incoming webhook authenticity.
 
 - **Method:** `POST`
 - **Endpoint:** Your pre-configured Notification Webhook URL.
@@ -29,13 +57,13 @@ CTC uses webhooks to notify your system when relevant cost basis data is updated
   - `X-CTC-Signature`: HMAC-SHA256 signature (Hex-encoded) of the payload, used for verification.
   - _(Optional)_ `X-CTC-Event-Id`: A unique ID for this specific webhook event attempt. Useful for debugging and idempotency.
 - **Signature Verification (`X-CTC-Signature`):**
-  1.  **String to Sign:** Concatenate the timestamp (from `X-CTC-Timestamp`) and the raw request body (JSON string) using a period (`.`) as a separator. Example: `1678886400.{"providerUserId":"user123",...}`.
+  1.  **String to Sign:** Concatenate the timestamp (from `X-CTC-Timestamp`) and the raw request body (JSON string) using a period (`.`) as a separator. Example: `1678886400.{"provider_uid":"user123",...}`.
   2.  **Compute HMAC:** Calculate the HMAC-SHA256 hash of the "String to Sign" using the **Shared Secret** established during partner configuration.
   3.  **Compare:** Hex-encode the computed hash and compare it securely against the value provided in the `X-CTC-Signature` header.
 - **Request Body (Payload - Example):** The payload is lightweight, designed only to trigger data retrieval.
   ```json
   {
-    "providerUserId": "partner_user_abc789",
+    "provider_uid": "partner_user_abc789",
     "eventType": "ctc.cost_basis.ready",
     "eventTimestamp": 1678886400
   }
@@ -43,69 +71,62 @@ CTC uses webhooks to notify your system when relevant cost basis data is updated
 - **Your Response:**
   - **Success:** Upon successful signature and timestamp validation, immediately return an HTTP `2xx` status code (e.g., `200 OK`, `202 Accepted`). **Process the notification asynchronously** (e.g., queue a task to call the Data API) to avoid blocking the webhook response.
   - **Failure:** Return an appropriate `4xx` (e.g., `401 Unauthorized` for signature mismatch, `400 Bad Request` for malformed payload) or `5xx` error code if validation fails or an immediate server error occurs.
-- **CTC Retries:** CTC implements a retry mechanism with exponential backoff for webhook deliveries that fail (non-`2xx` response or network errors). Your endpoint should be idempotent (e.g., using `X-CTC-Event-Id` or tracking `eventTimestamp` per `providerUserId`) to handle potential duplicate deliveries gracefully.
+- **CTC Retries:** CTC implements a retry mechanism with exponential backoff for webhook deliveries that fail (non-`2xx` response or network errors). Your endpoint should be idempotent (e.g., using `X-CTC-Event-Id` or tracking `eventTimestamp` per `provider_uid`) to handle potential duplicate deliveries gracefully.
 
 ---
 
-### Partner Data API Specification
+### Partner Data API: Get Transaction Cost Basis
 
-This API allows you to retrieve the detailed, structured cost basis data calculated by CTC for your connected users, triggered by a notification webhook or your own schedule.
+This API allows you to retrieve detailed, structured cost basis information for specific transactions associated with a user, filterable by various criteria. This is often used after receiving a webhook notification or based on the partner's own schedule (e.g., for year-end reporting).
 
-#### Authentication: Signed Requests (HMAC-SHA256)
-
-Requests to the API **MUST** be authenticated using a signature generated with the API Secret component of the Partner-Level API Credentials provided by CTC. All requests must use HTTPS.
-
-1.  **Headers Required:**
-    - `X-API-Key`: Your unique API Key provided by CTC.
-    - `X-Timestamp`: Current Unix timestamp (seconds since epoch). Requests with timestamps differing significantly from the server time may be rejected.
-    - `X-Signature`: The HMAC-SHA256 signature (Base64 encoded).
-2.  **Signature Generation:**
-    - **String to Sign:** Concatenate the following elements using a newline character (`\n`) as a separator:
-      - Unix Timestamp (from `X-Timestamp` header)
-      - HTTP Method (e.g., `GET`)
-      - Request Path (e.g., `/v1/partner/cost_basis`)
-      - Query String (alphabetically sorted by parameter name, e.g., `asset_ticker=BTC&limit=100&providerUserId=...`). If no query string, use an empty string.
-      - Request Body (typically empty for GET requests). If no body, use an empty string.
-    - **Compute HMAC:** Calculate the HMAC-SHA256 hash of the "String to Sign" using your API Secret as the key.
-    - **Encode:** Base64 encode the resulting binary hash. This encoded string is the value for the `X-Signature` header.
-
-Authentication failures (invalid key, signature, timestamp) will result in a `401 Unauthorized` response.
-
-#### Endpoint: Get Cost Basis
-
-Retrieves cost basis information for transactions associated with a specific user, focusing on providing details necessary for assets relevant to your platform and 1099-DA reporting.
+**Endpoint:**
 
 - **Method:** `GET`
-- **Path:** `/v1/partner/cost_basis`
+- **Path:** `/v1/partner/cost_basis/transactions/{provider_uid}`
 - **Host:** `https://api.cryptotaxcalculator.io` (Production Host)
 
-#### Query Parameters
+**Authentication:**
 
-| Parameter          | Type   | Required | Description                                                                                                                                                           |
-| ------------------ | ------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `providerUserId`   | String | Yes      | The unique identifier for the user, established during the SSO/OAuth linkage.                                                                                         |
-| `transaction_type` | String | No       | Filter results by transaction type (e.g., `transfer_in`, `buy`). If omitted, defaults to types relevant for partner cost basis reporting (consult CTC for specifics). |
-| `asset_ticker`     | String | No       | Filter results for a specific asset symbol (e.g., `BTC`, `ETH`). Uppercase format expected.                                                                           |
-| `start_date`       | String | No       | Filter results for transactions occurring **on or after** this date (inclusive). Format: ISO 8601 `YYYY-MM-DD`.                                                       |
-| `end_date`         | String | No       | Filter results for transactions occurring **on or before** this date (inclusive). Format: ISO 8601 `YYYY-MM-DD`.                                                      |
-| `limit`            | Int    | No       | Maximum number of _top-level transaction records_ to return (Default: 100, Max: 1000).                                                                                |
-| `offset`           | Int    | No       | Number of _top-level transaction records_ to skip for pagination (Default: 0).                                                                                        |
+Requires HMAC-SHA256 signed requests as described in the **Common API Authentication** section above.
 
-#### Response (200 OK)
+**Path Parameters:**
 
-A successful request returns a JSON object containing a list of transaction records (`data`) and pagination details. Each transaction record represents a specific event (e.g., a transfer relevant to the partner) and includes detailed acquisition lot information needed for 1099-DA reporting.
+| Parameter      | Type   | Required | Description                                                                   |
+| -------------- | ------ | -------- | ----------------------------------------------------------------------------- |
+| `provider_uid` | String | Yes      | The unique identifier for the user, established during the SSO/OAuth linkage. |
+
+**Query Parameters:**
+
+| Parameter                 | Type   | Required | Description                                                                                                                                      |
+| ------------------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `provider_transaction_id` | String | No       | Filter results to a specific transaction identified by the partner's unique transaction ID (the ID provided by your system for the transaction). |
+| `asset_ticker`            | String | No       | Filter results for a specific asset symbol (e.g., `BTC`, `ETH`). Uppercase format expected.                                                      |
+| `start_date`              | String | No       | Filter results for transactions occurring **on or after** this date (inclusive). Format: ISO 8601 `YYYY-MM-DD`.                                  |
+| `end_date`                | String | No       | Filter results for transactions occurring **on or before** this date (inclusive). Format: ISO 8601 `YYYY-MM-DD`.                                 |
+| `limit`                   | Int    | No       | Maximum number of _top-level transaction records_ containing lots to return (Default: 100, Max: 1000).                                           |
+| `offset`                  | Int    | No       | Number of _top-level transaction records_ containing lots to skip for pagination (Default: 0).                                                   |
+
+**Response (200 OK):**
+
+A successful request returns a JSON object containing a list of transaction records (`data`) relevant to the filters, each potentially including the detailed cost basis lots associated with that transaction, along with pagination details.
 
 ```json
 {
   "data": [
     {
-      "acquisition_details": [
-        // Array of acquisition lots contributing to this transaction's cost basis
+      "asset": "BTC", // Asset ticker for the transaction
+      "ctc_transaction_id": "ctc_tx_abc123", // CTC's internal ID for the transaction
+      "partner_transaction_id": "partner_tx_xyz789", // The partner's transaction ID, if known/correlated by CTC, else null
+      "quantity": "0.5", // Total quantity for this transaction_id event. String for high precision.
+      "transaction_date": "2023-05-15T10:30:00Z", // Date of the event (e.g., transfer)
+      "transaction_type": "transfer_in", // Type of transaction
+      "cost_basis_lots": [
+        // Array of CostBasisLot objects representing the breakdown for this transaction
         {
-          "acquisition_date": "2022-11-20T08:00:00Z", // ISO 8601 timestamp of original acquisition
-          "cost_basis_amount": "5000.00", // String for high precision
-          "cost_basis_currency": "USD", // Cost basis currency for this lot
-          "quantity": "0.2" // Quantity acquired in this lot. String for high precision.
+          "acquisition_date": "2022-11-20T08:00:00Z",
+          "cost_basis_amount": "5000.00",
+          "cost_basis_currency": "USD",
+          "quantity": "0.2"
         },
         {
           "acquisition_date": "2023-02-10T12:00:00Z",
@@ -113,19 +134,11 @@ A successful request returns a JSON object containing a list of transaction reco
           "cost_basis_currency": "USD",
           "quantity": "0.3"
         }
-        // ... potentially more lots if FIFO/LIFO etc. requires breakdown
       ],
-      "asset": "BTC", // Asset ticker
-      "calculation_timestamp": "2024-01-10T15:00:00Z", // When this data was last computed by CTC.
-      "cost_basis_currency": "USD", // User's primary reporting currency in CTC.
-      "ctc_transaction_id": "ctc_tx_abc123", // CTC's internal ID for the transaction
-      "partner_transaction_id": "partner_tx_xyz789", // The partner's transaction ID, if known/correlated by CTC, else null
-      "quantity": "0.5", // Total quantity for this transaction_id event. String for high precision.
-      "total_cost_basis_amount": "15000.00", // Total cost basis for the quantity. String for high precision.
-      "transaction_date": "2023-05-15T10:30:00Z", // Date of the event (e.g., transfer)
-      "transaction_type": "transfer_in" // Type of transaction
+      "total_cost_basis_amount": "15000.00", // Total cost basis for the quantity (sum of lots). String for high precision.
+      "cost_basis_currency": "USD" // Primary currency for the total cost basis amount
     }
-    // ... more transaction records
+    // ... more transaction records matching filters ...
   ],
   "pagination": {
     "limit": 100,
@@ -137,73 +150,134 @@ A successful request returns a JSON object containing a list of transaction reco
 
 **Response Field Notes:**
 
-- **Precision:** `quantity`, `total_cost_basis_amount`, `acquisition_details[].quantity`, `acquisition_details[].cost_basis_amount` are returned as strings to preserve high precision required for financial calculations.
-- **`cost_basis_currency`:** Represents the user's primary reporting currency setting within CTC (e.g., USD, AUD, CAD). This is not configurable per request.
-- **`acquisition_details`:** Provides the critical breakdown of original acquisition dates and cost basis per lot, essential for accurate capital gains calculation (short-term vs. long-term) required for 1099-DA. The sum of `acquisition_details[].quantity` should equal the top-level `quantity`. The sum of `acquisition_details[].cost_basis_amount` should equal `total_cost_basis_amount`.
+- **`CostBasisLot` Object Structure:** Each object within the `cost_basis_lots` array represents a specific cost basis layer contributing to the transaction. It includes:
+  - `acquisition_date` (String ISO 8601): Original acquisition date of the lot.
+  - `cost_basis_amount` (String): Cost basis allocated to this portion of the lot.
+  - `cost_basis_currency` (String): Currency of the cost basis.
+  - `quantity` (String): Quantity from this specific lot used in the transaction.
+- **Precision:** All numeric quantity and amount fields are returned as strings to preserve high precision.
 
-#### Error Responses
+---
 
-Standard HTTP status codes are used. Error responses include a JSON body with details.
+## Partner Holdings Snapshot Extension
 
-- `400 Bad Request`: Invalid parameters (e.g., missing `providerUserId`, invalid date format).
-- `401 Unauthorized`: Missing or invalid API credentials, invalid signature, or significant timestamp skew.
-- `403 Forbidden`: Credentials valid, but lack permission for the requested resource or operation (e.g., user hasn't granted consent).
-- `404 Not Found`: `providerUserId` not found or no matching data for the given filters.
-- `429 Too Many Requests`: Rate limit exceeded.
-- `500 Internal Server Error`: Unexpected server error on CTC's side.
-- `503 Service Unavailable`: Temporary outage or maintenance.
+This extension provides partners with a detailed breakdown of individual cost basis lots associated with their platform for a specific user, representing the state of **holdings** captured at a designated point in time (snapshot date). This facilitates accurate reporting, reconciliation, and potentially aids in fulfilling specific regulatory requirements like IRS Form 1099-DA by providing the necessary lot-level detail as of a specific date.
 
-**Example Error Body:**
+### Purpose & Value
+
+Understanding the specific cost basis lots associated with assets held on a partner's platform is crucial for accurate tax calculations and reporting. When assets are transferred between platforms or have complex histories, determining the correct basis requires a comprehensive view. This extension leverages the user's reconciled transaction history within CTC to provide a precise snapshot of the cost basis lots relevant _to the partner_ at a specific date (e.g., the beginning of a tax year).
+
+This prevents the partner from needing to reconstruct this potentially complex lot-level detail independently and ensures consistency with the user's overall tax position calculated by CTC.
+
+### Data Provided
+
+This extension returns a detailed list of the individual cost basis lots that are attributed to the partner's platform within CTC's records, as they existed on the specified `snapshot_date`. This includes lots for assets currently held or potentially associated with relevant historical transfers.
+
+Each lot includes details such as:
+
+- **Asset Identification:** Ticker symbol (e.g., `BTC`, `ETH`).
+- **Acquisition Date:** The original date the specific lot was acquired.
+- **Original Cost Basis Amount & Currency:** The cost basis calculated for that lot at acquisition.
+- **Remaining Quantity:** The quantity of that specific lot remaining and associated with the partner platform as of the `snapshot_date`.
+- **Calculation Timestamp:** When the snapshot data was computed.
+
+### Accessing the Snapshot (Partner Data API: Get Holdings Snapshot)
+
+Access to this detailed lot data, representing the user's holdings relevant to the partner platform _as of the beginning of the first tax year subject to IRS 1099-DA reporting (January 1st, 2025)_, is provided via a dedicated API endpoint. This pre-calculated snapshot serves as a baseline for subsequent reporting periods.
+
+**Endpoint:**
+
+- **Method:** `GET`
+- **Path:** `/v1/partner/cost_basis/holdings/{provider_uid}`
+- **Host:** `https://api.cryptotaxcalculator.io` (Production Host)
+
+**Authentication:**
+
+Requires HMAC-SHA256 signed requests as described in the **Common API Authentication** section above.
+
+**Path Parameters:**
+
+| Parameter      | Type   | Required | Description                                                                   |
+| -------------- | ------ | -------- | ----------------------------------------------------------------------------- |
+| `provider_uid` | String | Yes      | The unique identifier for the user, established during the SSO/OAuth linkage. |
+
+**Query Parameters:**
+
+| Parameter | Type | Required | Description                                                            |
+| --------- | ---- | -------- | ---------------------------------------------------------------------- |
+| `limit`   | Int  | No       | Maximum number of cost basis lots to return (Default: 100, Max: 1000). |
+| `offset`  | Int  | No       | Number of cost basis lots to skip for pagination (Default: 0).         |
+
+**Response (200 OK):**
+
+A successful request returns a JSON object containing the effective date of the snapshot and a paginated list of detailed cost basis lots associated with the partner for the given user as of that date.
 
 ```json
 {
-  "error": {
-    "code": "INVALID_PARAMETER",
-    "message": "Invalid date format for start_date. Use YYYY-MM-DD.",
-    "details": {
-      "parameter": "start_date",
-      "value": "15-01-2023"
+  "snapshot_effective_date": "2025-01-01", // The fixed date for which this baseline snapshot is generated
+  "calculation_timestamp": "2024-02-15T10:00:00Z", // When CTC generated this specific response data
+  "cost_basis_lots": [
+    // Array of CostBasisLot objects relevant to the partner as of snapshot_effective_date
+    {
+      "asset": "BTC", // Asset Ticker for this lot
+      "acquisition_date": "2022-11-20T08:00:00Z",
+      "cost_basis_amount": "5000.00",
+      "cost_basis_currency": "USD",
+      "quantity": "0.2"
+    },
+    {
+      "asset": "BTC",
+      "acquisition_date": "2023-01-05T15:30:00Z",
+      "cost_basis_amount": "6000.00",
+      "cost_basis_currency": "USD",
+      "quantity": "0.3"
+    },
+    {
+      "asset": "ETH",
+      "acquisition_date": "2022-12-10T11:00:00Z",
+      "cost_basis_amount": "1200.00",
+      "cost_basis_currency": "USD",
+      "quantity": "1.0"
     }
+    // ... potentially many more lots across different assets
+  ],
+  "pagination": {
+    "limit": 100, // The limit used for this request
+    "offset": 0, // The offset used for this request
+    "total_records": 542 // Total number of lots available for this snapshot/user/partner
   }
 }
 ```
 
-#### Rate Limiting
+**Response Field Notes:**
 
-API requests are subject to rate limiting. Exceeding the limit will result in a `429 Too Many Requests` error. Contact CTC for specific rate limit details applicable to your partnership agreement. Response headers may include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` (Unix timestamp indicating when the limit resets).
-
-#### API Versioning
-
-The API uses URI path versioning (e.g., `/v1/`). Breaking changes will be introduced under a new version path. Non-breaking changes (e.g., adding new optional parameters or response fields) may occur within the current version.
-
----
-
-### Partner Implementation Requirements
-
-_(Consolidated from previous version)_
-
-- **SSO Integration:** Ensure the base TaxHub SDK SSO flow is implemented to establish the `providerUserId` link.
-- **Webhook Endpoint:** Create, host, and secure a webhook endpoint capable of:
-  - Receiving `POST` requests from CTC IPs.
-  - Validating `X-CTC-Timestamp` to prevent replay attacks.
-  - Verifying `X-CTC-Signature` using HMAC-SHA256 and the shared secret.
-  - Responding quickly with a `2xx` status code.
-  - Handling notifications asynchronously (queueing for processing).
-  - Implementing idempotency logic.
-- **API Client:** Implement a client capable of:
-  - Generating HMAC-SHA256 signatures for API requests using the API Key/Secret.
-  - Making authenticated `GET` calls to the CTC Partner Data API endpoint.
-  - Handling JSON responses, including pagination and error codes.
-  - Respecting rate limits.
+- **`CostBasisLot` Object Structure:** Each object within the `cost_basis_lots` array represents a specific cost basis layer relevant to the partner as of the `snapshot_effective_date`. It includes:
+  _ `asset` (String): The ticker symbol for the asset of this lot.
+  _ `acquisition_date` (String ISO 8601): Original acquisition date of the lot.
+  _ `cost_basis_amount` (String): Cost basis allocated to this portion of the lot.
+  _ `cost_basis_currency` (String): Currency of the cost basis. \* `quantity` (String): Quantity remaining for this specific lot.
+- **Fixed Date:** This endpoint always returns the snapshot as of the specific `snapshot_effective_date` indicated (e.g., "2025-01-01").
+- **Partner Relevance:** The specific logic determining which lots are associated with the partner depends on Crypto Tax Calculator's internal tracking of wallets and transfers linked to the partner account.
+- **Precision:** All numeric quantity and amount fields are returned as strings to preserve high precision.
 
 ---
 
-Detailed technical specifications beyond this overview, including specific error codes and potential nuances, are available in our full integration guides upon request.
+## General Considerations
 
-**Benefits:**
+These points apply generally to the Partner Data API endpoints described in this document.
 
-- Reduces user burden and potential errors in manual data transfer.
-- Provides accurate, detailed cost basis (including tax lot specifics) needed for 1099-DA Safe Harbor compliance.
-- Leverages a secure, push-based notification system combined with a robust pull-based API for efficient and reliable data transfer.
+- **Error Handling:** Both Partner Data API endpoints utilize standard HTTP status codes for errors (e.g., `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `429 Too Many Requests`, `500 Internal Server Error`, `503 Service Unavailable`). Error responses include a JSON body with `error.code` (a machine-readable string indicating the error type, e.g., `INVALID_PARAMETER`, `AUTHENTICATION_FAILED`), `error.message` (a human-readable description), and optional `error.details` (an object containing specific context, like invalid parameter names/values) fields for diagnostics.
+- **Rate Limiting:** All Partner Data API endpoints are subject to rate limiting to ensure service stability and fair usage. Exceeding defined limits will result in a `429 Too Many Requests` response. Please check the `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` (Unix timestamp) response headers for details on your current limits and status. Contact Crypto Tax Calculator for specific rate limit details applicable to your partnership agreement.
+- **API Versioning:** Partner Data APIs use URI path versioning (e.g., `/v1/`). Breaking changes (e.g., removing fields, changing required parameters or authentication methods) will be introduced under a new version path (e.g., `/v2/`). Non-breaking changes (e.g., adding new optional parameters or response fields) may occur within the current version.
+- **Data Precision:** All numeric fields representing quantities or currency amounts (e.g., `quantity`, `cost_basis_amount`) are returned as strings to preserve high precision and avoid potential floating-point inaccuracies.
 
-Detailed technical specifications for the webhook payload format, signature verification, and the Partner API (including authentication and data schema) are available upon request.
+---
+
+### Benefits
+
+- **Enhanced Reporting Accuracy:** Provides the detailed lot-level data often required for precise tax form population (e.g., short-term vs. long-term gains on 1099-DA).
+- **Simplified Reconciliation:** Allows partners to reconcile their records against the specific cost basis lots calculated by CTC.
+- **Reduced Partner Burden:** Avoids the need for partners to reconstruct complex historical cost basis calculations for assets associated with their platform.
+- **User Consistency:** Ensures reporting aligns with the user's comprehensively calculated tax position in CTC.
+
+_Further details on specific error codes, advanced configurations, or SDK availability can be provided upon request._
