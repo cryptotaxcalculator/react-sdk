@@ -1,6 +1,6 @@
 # Available Extensions
 
-This document details optional extensions that can be added to the core CryptoTaxCalculator integration (e.g., via the TaxHub SDK or a direct partnership) to enable enhanced data sharing and functionality between the partner platform and CTC.
+This document details optional extensions that can be added to the core TaxHub integration to enable enhanced data sharing and functionality between the partner platform and CTC.
 
 ---
 
@@ -183,11 +183,7 @@ Each lot includes details such as:
 
 ### Accessing the Snapshot (Partner Data API: Get Holdings Snapshot)
 
-<<<<<<< HEAD
 Access to this detailed lot data, representing the user's holdings relevant to the partner platform _as of the beginning of the first tax year subject to IRS 1099-DA reporting (January 1st, 2025)_, is provided via a dedicated API endpoint. This pre-calculated snapshot serves as a baseline for subsequent reporting periods.
-=======
-Access to this detailed lot data is provided via a dedicated API endpoint.
->>>>>>> refs/remotes/origin/04-14-update_available_extensions_to_reference_new_schema_for_1099-da_sharing
 
 **Endpoint:**
 
@@ -207,7 +203,6 @@ Requires HMAC-SHA256 signed requests as described in the **Common API Authentica
 
 **Query Parameters:**
 
-<<<<<<< HEAD
 | Parameter | Type | Required | Description                                                            |
 | --------- | ---- | -------- | ---------------------------------------------------------------------- |
 | `limit`   | Int  | No       | Maximum number of cost basis lots to return (Default: 100, Max: 1000). |
@@ -223,24 +218,6 @@ A successful request returns a JSON object containing the effective date of the 
   "calculation_timestamp": "2024-02-15T10:00:00Z", // When CTC generated this specific response data
   "cost_basis_lots": [
     // Array of CostBasisLot objects relevant to the partner as of snapshot_effective_date
-=======
-| Parameter       | Type   | Required | Description                                                                                         |
-| --------------- | ------ | -------- | --------------------------------------------------------------------------------------------------- |
-| `snapshot_date` | String | Yes      | The date for which the snapshot of lots is requested (e.g., `YYYY-MM-DD` format like `2023-01-01`). |
-| `limit`         | Int    | No       | Maximum number of cost basis lots to return (Default: 100, Max: 1000).                              |
-| `offset`        | Int    | No       | Number of cost basis lots to skip for pagination (Default: 0).                                      |
-
-**Response (200 OK):**
-
-A successful request returns a JSON object containing the snapshot date, a paginated list of detailed cost basis lots, and pagination metadata.
-
-```json
-{
-  "snapshot_date": "2023-01-01", // The date requested for the snapshot
-  "calculation_timestamp": "2024-02-15T10:00:00Z", // When CTC generated this response
-  "cost_basis_lots": [
-    // Array of CostBasisLot objects relevant to the partner at snapshot_date
->>>>>>> refs/remotes/origin/04-14-update_available_extensions_to_reference_new_schema_for_1099-da_sharing
     {
       "asset": "BTC", // Asset Ticker for this lot
       "acquisition_date": "2022-11-20T08:00:00Z",
@@ -274,7 +251,6 @@ A successful request returns a JSON object containing the snapshot date, a pagin
 
 **Response Field Notes:**
 
-<<<<<<< HEAD
 - **`CostBasisLot` Object Structure:** Each object within the `cost_basis_lots` array represents a specific cost basis layer relevant to the partner as of the `snapshot_effective_date`. It includes:
   _ `asset` (String): The ticker symbol for the asset of this lot.
   _ `acquisition_date` (String ISO 8601): Original acquisition date of the lot.
@@ -282,15 +258,6 @@ A successful request returns a JSON object containing the snapshot date, a pagin
   _ `cost_basis_currency` (String): Currency of the cost basis. \* `quantity` (String): Quantity remaining for this specific lot.
 - **Fixed Date:** This endpoint always returns the snapshot as of the specific `snapshot_effective_date` indicated (e.g., "2025-01-01").
 - **Partner Relevance:** The specific logic determining which lots are associated with the partner depends on Crypto Tax Calculator's internal tracking of wallets and transfers linked to the partner account.
-=======
-- **`CostBasisLot` Object Structure:** Each object within the `cost_basis_lots` array represents a specific cost basis layer relevant to the partner as of the snapshot date. It includes:
-  - `asset` (String): The ticker symbol for the asset of this lot.
-  - `acquisition_date` (String ISO 8601): Original acquisition date of the lot.
-  - `cost_basis_amount` (String): Cost basis allocated to this portion of the lot.
-  - `cost_basis_currency` (String): Currency of the cost basis.
-  - `quantity` (String): Quantity remaining for this specific lot.
-- **Partner Relevance:** The specific logic determining which lots are associated with the partner depends on CTC's internal tracking of wallets and transfers linked to the partner account.
->>>>>>> refs/remotes/origin/04-14-update_available_extensions_to_reference_new_schema_for_1099-da_sharing
 - **Precision:** All numeric quantity and amount fields are returned as strings to preserve high precision.
 
 ---
